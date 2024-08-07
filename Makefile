@@ -1,8 +1,9 @@
-PROJECT_DIR='rtc/'
+PROJECT_DIR=rtc/
 
 .PHONY: install
 format:
 	@poetry install
+	@isort $(PROJECT_DIR)
 
 .PHONY: format
 format:

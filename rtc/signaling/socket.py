@@ -1,16 +1,15 @@
 import asyncio
-from aiortc import RTCIceCandidate, RTCSessionDescription
 import json
-from aiortc.sdp import candidate_from_sdp, candidate_to_sdp
 from asyncio import StreamReader, StreamWriter
-from typing import Union
 from enum import Enum
-BYE = object()
+from typing import Union
 
-class MessageType(Enum):
-    answer='answer'
-    offer='offer'
-    bye='bye'
+from aiortc import RTCIceCandidate, RTCSessionDescription
+from aiortc.sdp import candidate_from_sdp, candidate_to_sdp
+
+from rtc.model.signaling import MessageType
+
+BYE = object()
 
 
 
