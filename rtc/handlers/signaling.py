@@ -1,7 +1,8 @@
-from aiortc import  RTCSessionDescription
+from aiortc import RTCSessionDescription
 
 from rtc.model.signaling import Offer
 from rtc.rtc.media import RTCMedia
+
 
 class SignalingHandler:
     def __init__(self):
@@ -11,4 +12,3 @@ class SignalingHandler:
         offer = RTCSessionDescription(sdp=Offer.sdp, type=params["type"])
 
         await self.rtc_media
-
