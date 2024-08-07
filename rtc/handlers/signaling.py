@@ -1,15 +1,14 @@
-from aiortc import MediaStreamTrack, RTCPeerConnection, RTCSessionDescription
+from aiortc import  RTCSessionDescription
 
 from rtc.model.signaling import Offer
+from rtc.rtc.media import RTCMedia
 
-
-class Signaling:
+class SignalingHandler:
     def __init__(self):
-        pass
+        self.rtc_media = RTCMedia()
 
-    def start():
+    async def start(self, offer: Offer):
         offer = RTCSessionDescription(sdp=Offer.sdp, type=params["type"])
 
-        pc = RTCPeerConnection()
-        pc_id = "PeerConnection(%s)" % uuid.uuid4()
-        pcs.add(pc)
+        await self.rtc_media
+

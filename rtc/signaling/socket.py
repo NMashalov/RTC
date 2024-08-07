@@ -7,21 +7,20 @@ from typing import Union
 from aiortc import RTCIceCandidate, RTCSessionDescription
 from aiortc.sdp import candidate_from_sdp, candidate_to_sdp
 
-from rtc.model.signaling import MessageType
+from rtc.model.signaling import MessageType, Offer
 
 BYE = object()
 
 
-
-def object_from_string(message_str:str):
-    message = json.loads(message_str)
-    if message["type"] in [MessageType.answer.value, MessageType.offer.value]:
+def object_from_string(message_str: str):
+    message = Offer.model_validate_json(message_str)
+    if message.type in [MessageType.answer.value, MessageType.offer.value]:
         return RTCSessionDescription(**message)
-    elif message["type"] == "bye":
+    elif message.type == "bye":
         return BYE
 
 
-def object_to_string(obj: Union[BYE,RTCSessionDescription]):
+def object_to_string(obj: Union[BYE, RTCSessionDescription]):
     if isinstance(obj, RTCSessionDescription):
         message = {"sdp": obj.sdp, "type": obj.type}
     else:
@@ -31,7 +30,7 @@ def object_to_string(obj: Union[BYE,RTCSessionDescription]):
 
 
 class TcpSocketSignaling:
-    def __init__(self, host: str, port:str):
+    def __init__(self, host: str, port: str):
         self._host = host
         self._port = port
 
@@ -41,15 +40,15 @@ class TcpSocketSignaling:
                 data = reader.readuntil()
             except asyncio.IncompleteReadError:
                 return object_from_string(data.decode("utf8"))
-        async with asyncio.start_server(
-            client_connected, host=self._host, port=self._port
-        ) as server:
+
+        with (
+            server := await asyncio.start_server(
+                client_connected, host=self._host, port=self._port
+            )
+        ):
             await server.serve_forever()
 
-
     async def send(self, descr):
-        writer = await asyncio.open_connection(
-            host=self._host, port=self._port
-        )
+        writer = await asyncio.open_connection(host=self._host, port=self._port)
         data = object_to_string(descr).encode("utf8")
         self._writer.write(data + b"\n")
